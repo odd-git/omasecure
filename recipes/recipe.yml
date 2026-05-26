@@ -2,44 +2,64 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
 name: omasecure
-# description will be included in the image's metadata
-description: This is my personal OS image.
+description: Security-focused Origami Linux image with Trivalent, niri, and audio production tools.
 
-# the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 42 # latest is also supported if you want new updates ASAP
+base-image: registry.gitlab.com/origami-linux/images/origami
+image-version: latest
 
-# module configuration, executed in order
-# you can include multiple instances of the same module
 modules:
+  # Deploy system config files (sysusers.d for audio group, etc.)
   - type: files
     files:
       - source: system
-        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
+        destination: /
 
+  # Package management: add repos, install and remove packages
   - type: dnf
     repos:
-      copr:
-        - atim/starship
+      files:
+        # Trivalent (hardened Chromium) and other secureblue packages
+        - https://repo.secureblue.dev/secureblue.repo
     install:
       packages:
-        - micro
+        # Default browser (hardened Chromium from secureblue)
+        - trivalent
+        # Wayland compositor
+        - niri
+        # Application launcher (Wayland-native)
+        - rofi-wayland
+        # Status bar
+        - waybar
+        # Shell prompt
         - starship
+        # Screen recorder / streaming
+        - obs-studio
+        # Video editor
+        - kdenlive
     remove:
       packages:
-        # example: removing firefox (in favor of the flatpak)
-        # "firefox" is the main package, "firefox-langpacks" is a dependency
+        # Replaced by Trivalent
         - firefox
-        - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
+        - firefox-langpacks
 
+  # Install the latest available major version of Ardour dynamically
+  - type: script
+    scripts:
+      - install-ardour-latest.sh
+
+  # Clone and run omablue setup scripts at image build time
+  - type: script
+    scripts:
+      - omablue-setup.sh
+
+  # System-wide flatpaks (Flathub)
   - type: default-flatpaks
     configurations:
-      - notify: true # Send notification after install/uninstall is finished (true/false)
+      - notify: true
         scope: system
-        # If no repo information is specified, Flathub will be used by default
-        install: # system flatpaks we want all users to have and not remove
-          - org.mozilla.firefox
+        install:
           - org.gnome.Loupe
-      - scope: user # Also add Flathub user repo, but no user packages
+      - scope: user
 
-  - type: signing # this sets up the proper policy & signing files for signed images to work fully
+  # Signing policy for the published image
+  - type: signing
