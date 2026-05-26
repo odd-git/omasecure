@@ -47,11 +47,6 @@ modules:
     scripts:
       - install-ardour-latest.sh
 
-  # Clone and run omablue setup scripts at image build time
-  - type: script
-    scripts:
-      - omablue-setup.sh
-
   # System-wide flatpaks (Flathub)
   - type: default-flatpaks
     configurations:
