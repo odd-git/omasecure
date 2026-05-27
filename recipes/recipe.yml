@@ -30,6 +30,8 @@ modules:
         - rofi-wayland
         # Status bar
         - waybar
+        # Terminal emulator
+        - foot
         # Screen recorder / streaming
         - obs-studio
         # Video editor
