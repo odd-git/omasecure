@@ -42,11 +42,6 @@ modules:
         - firefox
         - firefox-langpacks
 
-  # Install the latest available major version of Ardour dynamically
-  - type: script
-    scripts:
-      - install-ardour-latest.sh
-
   # System-wide flatpaks (Flathub)
   - type: default-flatpaks
     configurations:
