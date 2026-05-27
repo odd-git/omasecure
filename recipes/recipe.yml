@@ -41,7 +41,6 @@ modules:
         # KVM virtualization stack
         - qemu-kvm
         - libvirt
-        - libvirt-daemon-config-network
         - virt-manager
         - virt-install
         - virt-viewer
