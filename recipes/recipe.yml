@@ -17,6 +17,9 @@ modules:
   # Package management: add repos, install and remove packages
   - type: dnf
     repos:
+      copr:
+        # Ghostty terminal emulator
+        - pgdev/ghostty
       files:
         # Trivalent (hardened Chromium) and other secureblue packages
         - https://repo.secureblue.dev/secureblue.repo
