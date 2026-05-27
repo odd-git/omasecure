@@ -36,6 +36,15 @@ modules:
         - obs-studio
         # Video editor
         - kdenlive
+        # Terminal emulator
+        - ghostty
+        # KVM virtualization stack
+        - qemu-kvm
+        - libvirt
+        - libvirt-daemon-config-network
+        - virt-manager
+        - virt-install
+        - virt-viewer
     remove:
       packages:
         # Replaced by Trivalent
