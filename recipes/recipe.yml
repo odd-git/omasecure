@@ -30,8 +30,6 @@ modules:
         - rofi-wayland
         # Status bar
         - waybar
-        # Shell prompt
-        - starship
         # Screen recorder / streaming
         - obs-studio
         # Video editor
