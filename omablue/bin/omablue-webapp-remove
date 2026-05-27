@@ -1,0 +1,63 @@
+#!/bin/bash
+# Force the correct path to find gum
+export PATH="$HOME/.local/share/omablue/bin:$PATH"
+
+ICON_DIR="$HOME/.local/share/applications/icons"
+DESKTOP_DIR="$HOME/.local/share/applications"
+
+# Array to store found apps
+WEB_APPS=()
+
+if [ "$#" -eq 0 ]; then
+  # 1. Scan for installed Web Apps
+  # Look for .desktop files that call the omablue launch script
+  while IFS= read -r -d '' file; do
+    if grep -q 'omablue-launch-webapp' "$file"; then
+      WEB_APPS+=("$(basename "${file%.desktop}")")
+    fi
+  done < <(find "$DESKTOP_DIR" -maxdepth 1 -name '*.desktop' -print0)
+
+  # 2. Check if there are apps to remove
+  if ((${#WEB_APPS[@]} == 0)); then
+    echo "No web apps found to remove."
+    notify-send "Omablue" "No web apps found."
+    exit 0
+  fi
+
+  # 3. Selection via Gum
+  # Sort items alphabetically
+  IFS=$'\n' SORTED_APPS=($(sort <<<"${WEB_APPS[*]}"))
+  unset IFS
+
+  SELECTED=$(gum choose --no-limit --header "Select apps to remove (Space to select, Enter to confirm)" --selected-prefix="[X] " --unselected-prefix="[ ] " "${SORTED_APPS[@]}")
+
+  # If the user presses ESC or selects nothing
+  if [[ -z "$SELECTED" ]]; then
+    echo "Operation cancelled."
+    exit 0
+  fi
+
+  # Convert the selection into an array (handling names with spaces)
+  mapfile -t APP_NAMES <<<"$SELECTED"
+else
+  # If names are passed as arguments
+  APP_NAMES=("$@")
+fi
+
+# 4. Removal process
+for APP_NAME in "${APP_NAMES[@]}"; do
+  # Remove the .desktop file
+  if [[ -f "$DESKTOP_DIR/$APP_NAME.desktop" ]]; then
+    rm -f "$DESKTOP_DIR/$APP_NAME.desktop"
+    echo "Removed desktop file: $APP_NAME"
+  fi
+
+  # Remove the icon (trying both .png and other common extensions)
+  rm -f "$ICON_DIR/$APP_NAME.png"
+  rm -f "$ICON_DIR/$APP_NAME.jpg"
+
+  notify-send "Omablue" "Removed: $APP_NAME"
+  echo "Removal of $APP_NAME completed."
+done
+
+echo -e "\n\e[32mOperation completed.\e[0m"

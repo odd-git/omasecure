@@ -1,0 +1,5 @@
+---
+tags:
+  - Omablue
+related: "[[Omablue]]"
+---

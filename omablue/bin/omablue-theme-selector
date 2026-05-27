@@ -1,0 +1,29 @@
+#!/bin/bash
+set -euo pipefail
+
+# Omablue Theme Selector - The Secureblue Architect Tool
+
+export PATH="$HOME/.local/share/omablue/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+OMABIN="$HOME/.local/share/omablue/bin"
+# 1. Get the list of available themes
+THEME_LIST=$(omablue-theme-list)
+
+# Fzf selection
+SELECTED_THEME=$(echo "$THEME_LIST" | fzf \
+  --height=100% \
+  --layout=reverse \
+  --border=rounded \
+  --prompt="🎨 Choose your Theme: " \
+  --header="[Enter] Apply | [ESC] Exit" \
+  --color="bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8" \
+  --color="fg:#cdd6f4,header:#94e2d5,info:#cba6f7,pointer:#f5e0dc" \
+  --color="marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8")
+
+# 2. Apply selected theme
+if [[ -n "$SELECTED_THEME" ]]; then
+  # Apply theme by Omablue engine
+  omablue-theme-set "$SELECTED_THEME"
+else
+  echo "Selection aborted."
+  exit 0
+fi

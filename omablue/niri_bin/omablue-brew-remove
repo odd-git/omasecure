@@ -1,0 +1,68 @@
+#!/bin/bash
+set -euo pipefail
+
+# Force correct path for gum and brew
+export PATH="$HOME/.local/share/omablue/bin:$PATH"
+
+# Check dependencies
+if ! command -v gum &>/dev/null; then
+  echo "Error: gum is not installed."
+  read -n 1 -s -r -p "Press any key to exit..."
+  exit 1
+fi
+
+if ! command -v brew &>/dev/null; then
+  echo "Error: Homebrew is not installed."
+  read -n 1 -s -r -p "Press any key to exit..."
+  exit 1
+fi
+
+echo "Loading installed packages..."
+
+# 1. Fetch installed packages (Formulae and Casks)
+FORMULAE=$(brew list --formula | awk '{print $1 " [formula]"}')
+CASKS=$(brew list --cask | awk '{print $1 " [cask]"}')
+LIST=$(echo -e "$FORMULAE\n$CASKS" | sed '/^$/d' | sort)
+
+if [[ -z "$LIST" ]]; then
+  echo "No Homebrew packages found."
+  notify-send -a "Omablue" "Cleanup" "No packages to remove."
+  read -n 1 -s -r -p "Press any key to exit..."
+  exit 0
+fi
+
+# 2. Multi-selection via Gum
+# Space to select, Enter to confirm
+SELECTED=$(echo "$LIST" | gum choose \
+  --no-limit \
+  --header "Select Brew packages to REMOVE" \
+  --selected-prefix="[X] " \
+  --unselected-prefix="[ ] " \
+  --cursor-prefix="> " \
+  --selected.foreground="160") # Red color for removal warning
+
+# Exit if nothing selected
+if [[ -z "$SELECTED" ]]; then
+  echo "Operation cancelled."
+  sleep 1
+  exit 0
+fi
+
+# 3. Removal Process
+clear
+PACKAGE_NAMES=$(echo "$SELECTED" | awk '{print $1}')
+
+while IFS= read -r PACKAGE; do
+  echo -e "Removing: \e[31m$PACKAGE\e[0m..."
+
+  if brew uninstall "$PACKAGE"; then
+    notify-send -a "Omablue" -i "user-trash" "Removed" "$PACKAGE has been uninstalled."
+  else
+    echo -e "\e[31mError during removal of $PACKAGE\e[0m"
+  fi
+done <<< "$PACKAGE_NAMES"
+
+# Keep terminal open to verify logs
+echo -e "\n\e[32mCleanup process finished.\e[0m"
+echo "--------------------------------"
+read -p "Press [Enter] to close this window..."

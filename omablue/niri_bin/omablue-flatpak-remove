@@ -1,0 +1,66 @@
+#!/bin/bash
+set -euo pipefail
+
+# --- Secureblue Header ---
+# Ensure the path is correctly set for the atomic environment
+PATH="/usr/bin:/usr/local/bin:$PATH"
+
+# 1. Dependency Check
+# Verify if fzf is present in the system
+if ! command -v fzf &>/dev/null; then
+  notify-send -u critical "Error" "fzf is not installed. Please install it via brew or rpm-ostree."
+  exit 1
+fi
+
+# Send notification using Dunst to signal process start
+notify-send -u low -i "app-remove" "Flatpak Manager" "Generating list of installed applications..."
+
+# 2. Fetching Local Data
+# Use --app to list only installed software, excluding system runtimes
+# Format columns to match the picker script style
+formatted_list=$(flatpak list --app --columns=name,application,version |
+  awk -F'\t' 'BEGIN {print "NAME\tID\tVERSION"} {printf "%-30s\t%-40s\t%-15s\n", $1, $2, $3}')
+
+# 3. Interactive Selection (Omarchy Style)
+# Use fzf for a keyboard-driven selection experience
+selected_line=$(echo "$formatted_list" | fzf \
+  --header-lines=1 \
+  --prompt="Remove Application > " \
+  --layout=reverse \
+  --height=60% \
+  --border \
+  --ansi)
+
+# Exit if the user cancels the selection
+if [ -z "$selected_line" ]; then
+  exit 0
+fi
+
+# Extract the Application ID (the second column)
+app_id=$(echo "$selected_line" | awk -F'\t' '{gsub(/^[ \t]+|[ \t]+$/, "", $2); print $2}')
+
+# 4. Removal Process
+# Clear terminal and start the atomic removal
+clear
+echo "Starting atomic removal for: $app_id"
+echo "-----------------------------------------------------"
+
+# Perform explicit uninstallation
+if flatpak uninstall "$app_id" -y; then
+  REMOVE_STATUS=0
+else
+  REMOVE_STATUS=1
+fi
+
+# 5. Post-Removal Cleanup
+# Remove unused runtimes and data to keep the atomic system lean
+echo ""
+echo "Cleaning up unused dependencies..."
+flatpak uninstall --unused -y || true
+
+# Final Check and Notification
+if [ $REMOVE_STATUS -eq 0 ]; then
+  notify-send -u normal -i "user-trash" "Success" "$app_id removed and system cleaned."
+else
+  notify-send -u critical -i "dialog-error" "Failed" "Could not remove $app_id."
+fi

@@ -1,0 +1,160 @@
+#!/bin/bash
+# 1. Force window title for Sway rules (Floating Center)
+echo -ne "\033]0;omablue-webapp-install\007"
+
+# 2. Robust PATH Setup (to find gum and jq everywhere)
+export PATH="$HOME/.local/share/omablue/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+OMABIN="$HOME/.local/share/omablue/bin"
+
+set -euo pipefail
+
+# --- Depencencies ---
+if ! command -v gum &> /dev/null; then
+    notify-send "Error" "Install 'gum' to use this script."
+    exit 1
+fi
+if ! command -v jq &> /dev/null; then
+    notify-send "Error" "Install 'jq' to find browser profile."
+    exit 1
+fi
+
+# Create necessary directories
+mkdir -p "$HOME/.local/share/applications/icons"
+
+# --- 1. Input Collection ---
+if [ "$#" -lt 3 ]; then
+    echo -e "\e[34m󰖟 Omablue WebApp Installer\e[0m\n"
+
+    APP_NAME=$(gum input --prompt "App Name > " --placeholder "e.g., WhatsApp")
+    [[ -z "$APP_NAME" ]] && exit 0
+
+    APP_URL=$(gum input --prompt "URL > " --placeholder "https://web.whatsapp.com")
+    [[ -z "$APP_URL" ]] && exit 0
+
+    ICON_REF=$(gum input --prompt "URL Icon > " --placeholder "https://... (or local path)")
+    [[ -z "$ICON_REF" ]] && exit 0
+
+    INTERACTIVE_MODE=true
+else
+    APP_NAME="$1"
+    APP_URL="$2"
+    ICON_REF="$3"
+    INTERACTIVE_MODE=false
+fi
+
+# Sanitize APP_NAME: allow only alphanumeric, spaces, hyphens, underscores
+APP_NAME=$(echo "$APP_NAME" | tr -cd '[:alnum:] _-')
+if [[ -z "$APP_NAME" ]]; then
+    notify-send -u critical "Error" "Invalid app name."
+    exit 1
+fi
+
+# --- 2. Browser Scan---
+declare -A BROWSER_BINARIES=(
+    [Trivalent]=trivalent
+)
+
+BROWSERS=()
+for name in "${!BROWSER_BINARIES[@]}"; do
+    if command -v "${BROWSER_BINARIES[$name]}" >/dev/null 2>&1; then
+        BROWSERS+=("$name")
+    fi
+done
+
+if [ ${#BROWSERS[@]} -eq 0 ]; then
+    gum style --foreground 196 "I can't find any supported browser."
+    exit 1
+fi
+
+BROWSER_CHOICE=$(gum choose --header "Which Browser?" "${BROWSERS[@]}")
+BROWSER_BIN="${BROWSER_BINARIES[$BROWSER_CHOICE]}"
+
+# --- 3. Advanced profile management ---
+declare -A BROWSER_CONFIG_DIRS=(
+    [Trivalent]="$HOME/.config/trivalent"
+)
+
+PROFILE_DIR="${BROWSER_CONFIG_DIRS[$BROWSER_CHOICE]:-$HOME/.config/$BROWSER_CHOICE}"
+APP_PROFILE_FOLDER="Default" # Fallback
+
+if [ -f "$PROFILE_DIR/Local State" ]; then
+    # JSON (Chromium standard) - jq needed
+    declare -A PROFILE_MAP
+    PROFILES=()
+
+        while IFS='|' read -r folder name; do
+        if [[ -n "$name" ]]; then
+            PROFILES+=("$name")
+            PROFILE_MAP["$name"]="$folder"
+        fi
+    done < <(jq -r '.profile.info_cache | to_entries[] | "\(.key)|\(.value.name)"' "$PROFILE_DIR/Local State" 2>/dev/null || true)
+
+    if [ ${#PROFILES[@]} -gt 1 ]; then
+        CHOSEN_PROFILE=$(gum choose --header "Choose Browser" "${PROFILES[@]}")
+        APP_PROFILE_FOLDER="${PROFILE_MAP[$CHOSEN_PROFILE]}"
+    elif [ ${#PROFILES[@]} -eq 1 ]; then
+        APP_PROFILE_FOLDER="${PROFILE_MAP[${PROFILES[0]}]}"
+    fi
+
+elif [ -d "$PROFILE_DIR" ]; then
+
+    PROFILES=()
+    for d in "$PROFILE_DIR"/Profile*; do
+        [[ -d "$d" ]] || continue
+        PROFILES+=("$(basename "$d")")
+    done
+
+    if [ ${#PROFILES[@]} -gt 0 ]; then
+        APP_PROFILE_FOLDER=$(gum choose --header "Choose the profile" "${PROFILES[@]}")
+    fi
+fi
+
+# --- 4. Icon management ---
+ICON_DEST="$HOME/.local/share/applications/icons/$APP_NAME.png"
+
+if [[ $ICON_REF =~ ^https?:// ]]; then
+    # Download icon: limit to 5MB and verify it's an image
+    if ! curl -sL --max-filesize 5242880 -o "$ICON_DEST" "$ICON_REF"; then
+        ICON_DEST="web-browser"
+    elif ! file "$ICON_DEST" | grep -qiE 'image|icon'; then
+        rm -f "$ICON_DEST"
+        ICON_DEST="web-browser"
+    fi
+elif [[ -f "$ICON_REF" ]]; then
+
+    cp "$ICON_REF" "$ICON_DEST"
+else
+
+    ICON_DEST="$ICON_REF"
+fi
+
+# --- 5. Desktop file creation---
+LAUNCHER_SCRIPT="$OMABIN/omablue-launch-webapp"
+DESKTOP_FILE="$HOME/.local/share/applications/$APP_NAME.desktop"
+
+
+if [[ ! -f "$LAUNCHER_SCRIPT" ]]; then
+    echo "WARNING: Launcher not found at $LAUNCHER_SCRIPT"
+fi
+
+cat >"$DESKTOP_FILE" <<EOF
+[Desktop Entry]
+Version=1.0
+Name=$APP_NAME
+Comment=Web App Omablue
+Exec=$LAUNCHER_SCRIPT '$APP_URL' '$APP_PROFILE_FOLDER' '$BROWSER_BIN'
+Terminal=false
+Type=Application
+Icon=$ICON_DEST
+StartupNotify=true
+Categories=Network;WebBrowser;
+EOF
+
+chmod +x "$DESKTOP_FILE"
+
+# --- 6. Feedback ---
+if [[ $INTERACTIVE_MODE == true ]]; then
+    notify-send "Omablue" "WebApp installed: $APP_NAME ($BROWSER_CHOICE)"
+    echo -e "\n\e[32m✔ Installation completed!\e[0m"
+    sleep 1
+fi

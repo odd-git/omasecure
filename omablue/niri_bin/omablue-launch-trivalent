@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# --- 1. Global Environment & Path ---
+export PATH="$HOME/.local/bin:$HOME/.local/share/omablue/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+CONFIG_DIR="$HOME/.config/trivalent"
+LOCAL_STATE="$CONFIG_DIR/Local State"
+
+# --- 2. Dependencies Check ---
+if ! command -v jq &>/dev/null; then
+  notify-send "Error" "jq is required to parse browser profiles."
+  exit 1
+fi
+
+# --- 3. Profile Discovery ---
+if [[ -f "$LOCAL_STATE" ]]; then
+  # Extracting existing profiles
+  PROFILE_DATA=$(jq -r '.profile.info_cache | to_entries[] | "\(.value.name)|\(.key)"' "$LOCAL_STATE" 2>/dev/null)
+
+  # Injecting the Guest Profile option at the top of the list
+  # Format: Display Name | Identifier
+  PROFILE_DATA=$(echo -e "Guest Profile|GUEST_SESSION\n$PROFILE_DATA")
+else
+  notify-send "Error" "Trivalent Local State not found at $CONFIG_DIR"
+  exit 1
+fi
+
+# --- 4. User Selection (Rofi) ---
+SELECTED_NAME=$(echo "$PROFILE_DATA" | cut -d'|' -f1 | rofi -dmenu -i -p "󰖟 Trivalent Profile" -theme my_theme.rasi)
+
+[[ -z "$SELECTED_NAME" ]] && exit 0
+
+# --- 5. Launch Logic ---
+# Retrieve the folder/identifier
+SELECTED_ID=$(echo "$PROFILE_DATA" | awk -F'|' -v name="$SELECTED_NAME" '$1 == name {print $2; exit}')
+
+if [[ "$SELECTED_ID" == "GUEST_SESSION" ]]; then
+  # Launching Guest Mode
+  notify-send -u low -a "Trivalent" "Launching Guest Session" "No data will be saved."
+  nohup trivalent --guest >/dev/null 2>&1 &
+  disown
+elif [[ -n "$SELECTED_ID" ]]; then
+  # Launching Standard Profile
+  nohup trivalent --profile-directory="$SELECTED_ID" >/dev/null 2>&1 &
+  disown
+else
+  notify-send "Error" "Could not resolve profile for $SELECTED_NAME"
+fi

@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# Define paths for Fedora Atomic compliance
+BIN_DIR="$HOME/.local/share/omablue/bin"
+SYSTEMD_DIR="$HOME/.config/systemd/user"
+
+echo "󰂯 Starting Omablue Bluetooth Auto-Connect Setup..."
+
+# 1. Create necessary directories
+mkdir -p "$SYSTEMD_DIR"
+
+# 2. Create Systemd Service
+cat << EOF > "$SYSTEMD_DIR/omablue-bluetooth-autoconnect.service"
+[Unit]
+Description=Omablue Bluetooth Auto-Connect
+Documentation=https://github.com/odd-git/omablue
+After=bluetooth.target
+Wants=bluetooth.target
+
+[Service]
+Type=oneshot
+ExecStart=$BIN_DIR/omablue-bluetooth-autoconnect
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=120
+
+# Security hardening (Secureblue standard)
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%t
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+MemoryDenyWriteExecute=true
+CapabilityBoundingSet=
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+IPAddressDeny=any
+RestrictAddressFamilies=AF_BLUETOOTH AF_UNIX
+
+# Resource limits
+Nice=19
+IOSchedulingClass=idle
+
+[Install]
+WantedBy=default.target
+EOF
+
+# 3. Create Systemd Timer
+cat << EOF > "$SYSTEMD_DIR/omablue-bluetooth-autoconnect.timer"
+[Unit]
+Description=Omablue Bluetooth Auto-Connect Timer
+After=bluetooth.target
+Wants=bluetooth.target
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=90s
+Persistent=false
+
+[Install]
+WantedBy=timers.target
+EOF
+
+systemctl --user daemon-reload
+systemctl --user enable --now omablue-bluetooth-autoconnect.timer
+
+echo "󰄬 Setup complete! The timer is active and will check for Bluetooth devices every 45 seconds."

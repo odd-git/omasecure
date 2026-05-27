@@ -1,0 +1,23 @@
+
+
+# omablue path 
+set $omabin ~/.local/share/omablue/bin
+include env
+exec $omabin/omablue-onboarding
+include background
+include idle
+include look
+include input
+include unbindsym
+include bindings
+include user-bindings
+include windows_rules
+include user-windows-rules
+
+
+
+
+
+
+
+

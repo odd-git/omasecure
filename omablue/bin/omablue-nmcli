@@ -1,0 +1,297 @@
+#!/usr/bin/env bash
+
+# --- Secureblue Sway Architect: Network Manager ---
+# Optimized for Fedora Atomic & Dunst integration
+# Enhanced security and error handling
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Dependency check
+for cmd in nmcli rofi notify-send; do
+  if ! command -v "$cmd" &>/dev/null; then
+    echo "Error: Required command '$cmd' not found" >&2
+    exit 1
+  fi
+done
+
+CONFIG_DIR="$HOME/.config/sway-network"
+mkdir -p "$CONFIG_DIR"
+chmod 700 "$CONFIG_DIR"
+PASS_FILE="$CONFIG_DIR/hotspot_pass"
+
+# Get the primary wifi interface
+INTERFACE=$(nmcli -t -f DEVICE,TYPE device | grep wifi | cut -d: -f1 | head -n1)
+
+# Validate interface exists
+if [ -z "$INTERFACE" ]; then
+  notify-send -u critical -a "Network" "Error" "No WiFi interface found"
+  exit 1
+fi
+
+toggle_wifi() {
+  STATE=$(nmcli radio wifi)
+  if [ "$STATE" = "enabled" ]; then
+    nmcli device disconnect "$INTERFACE" 2>/dev/null || true
+    nmcli radio wifi off
+    notify-send -a "Network" -i network-wireless-off-symbolic "WiFi" "Disabled"
+  else
+    nmcli radio wifi on
+    notify-send -a "Network" -i network-wireless-symbolic "WiFi" "Enabled"
+  fi
+}
+
+manage_hotspot() {
+  HOTSPOT_OPTIONS="󰖩 Toggle Hotspot\n󰒄 Set/Change Password"
+  SEL=$(echo -e "$HOTSPOT_OPTIONS" | rofi -dmenu -p "Hotspot" -i -width 20 -hover-select -me-select-entry '' -me-accept-entry MousePrimary)
+
+  case "$SEL" in
+  *"Toggle Hotspot")
+    # Check if hotspot is active (use || true for set -e compatibility)
+    IS_ACTIVE=$(nmcli -t -f NAME,DEVICE connection show --active | grep "Hotspot" || true)
+    if [ -n "$IS_ACTIVE" ]; then
+      nmcli con down Hotspot && notify-send -a "Network" "Hotspot" "Deactivated"
+    else
+      # Validate or create password
+      if [ ! -f "$PASS_FILE" ]; then
+        NEW_PASS=$(rofi -dmenu -p "Set Hotspot Password (min 8 chars)" -password -me-select-entry '' -me-accept-entry MousePrimary)
+        if [ -z "$NEW_PASS" ]; then
+          notify-send -u critical -a "Network" "Error" "Password required"
+          return
+        fi
+        if [ ${#NEW_PASS} -lt 8 ]; then
+          notify-send -u critical -a "Network" "Error" "Password too short (min 8 chars)"
+          return
+        fi
+        echo "$NEW_PASS" >"$PASS_FILE"
+        chmod 600 "$PASS_FILE"
+      fi
+      HPASS=$(cat "$PASS_FILE")
+      notify-send -a "Network" "Hotspot" "Activating..."
+      # Use pre-configured connection to avoid exposing password in /proc/*/cmdline
+      if nmcli connection show Hotspot &>/dev/null; then
+        nmcli connection modify Hotspot wifi-sec.psk "$HPASS"
+        if nmcli connection up Hotspot; then
+          notify-send -a "Network" -i folder-remote "Hotspot" "Active: $(hostname)"
+        else
+          notify-send -u critical -a "Network" "Error" "Failed to activate hotspot"
+        fi
+      else
+        if nmcli device wifi hotspot ssid "$(hostname)" password "$HPASS" ifname "$INTERFACE"; then
+          notify-send -a "Network" -i folder-remote "Hotspot" "Active: $(hostname)"
+        else
+          notify-send -u critical -a "Network" "Error" "Failed to activate hotspot"
+        fi
+      fi
+    fi
+    ;;
+  *"Set/Change Password")
+    NEW_PASS=$(rofi -dmenu -p "New Password (min 8 chars)" -password -me-select-entry '' -me-accept-entry MousePrimary)
+    if [ -z "$NEW_PASS" ]; then
+      notify-send -u critical -a "Network" "Error" "Password cannot be empty"
+    elif [ ${#NEW_PASS} -lt 8 ]; then
+      notify-send -u critical -a "Network" "Error" "Password too short (min 8 chars)"
+    else
+      echo "$NEW_PASS" >"$PASS_FILE"
+      chmod 600 "$PASS_FILE"
+      notify-send -a "Network" "Hotspot" "Password updated"
+    fi
+    ;;
+  esac
+}
+
+get_vpn_status() {
+  local provider="$1"
+  case "$provider" in
+    tailscale)
+      if tailscale status --json 2>/dev/null | awk -F'"' '/"BackendState"/{exit ($4=="Running")?0:1}'; then
+        local ip=$(tailscale ip 2>/dev/null | head -1 || echo "?")
+        echo "✓ ($ip)"
+      else
+        echo "✗"
+      fi
+      ;;
+    mullvad)
+      if command -v mullvad &>/dev/null && mullvad status 2>/dev/null | grep -q "Connected"; then
+        echo "✓"
+      else
+        echo "✗"
+      fi
+      ;;
+    protonvpn)
+      if pgrep -f "protonvpn-app" &>/dev/null; then
+        echo "✓ running"
+      else
+        echo "✗"
+      fi
+      ;;
+    ivpn)
+      if command -v ivpn &>/dev/null && ivpn status 2>/dev/null | grep -q -i "connected"; then
+        echo "✓"
+      else
+        echo "✗"
+      fi
+      ;;
+  esac
+}
+
+detect_installed_vpns() {
+  local vpns=()
+  command -v tailscale &>/dev/null && vpns+=("tailscale")
+  command -v mullvad &>/dev/null && vpns+=("mullvad")
+  command -v protonvpn-app &>/dev/null && vpns+=("protonvpn")
+  command -v ivpn &>/dev/null && vpns+=("ivpn")
+  printf '%s\n' "${vpns[@]}"
+}
+
+get_vpn_name() {
+  local provider="$1"
+  case "$provider" in
+    tailscale) echo "Tailscale" ;;
+    mullvad) echo "Mullvad" ;;
+    protonvpn) echo "ProtonVPN" ;;
+    ivpn) echo "IVPN" ;;
+    *) echo "$provider" ;;
+  esac
+}
+
+manage_vpn() {
+  local vpn_bin="$SCRIPT_DIR/omablue-vpn"
+  if [ ! -x "$vpn_bin" ]; then
+    vpn_bin=$(command -v omablue-vpn 2>/dev/null || true)
+  fi
+
+  local installed_vpns
+  installed_vpns=$(detect_installed_vpns)
+
+  if [ -z "$installed_vpns" ]; then
+    notify-send -u critical -a "Network" "VPN" "No VPN providers found"
+    return
+  fi
+
+  if [ -z "$vpn_bin" ]; then
+    # Fallback to old tailscale script if omablue-vpn not available
+    local tailscale_bin="$SCRIPT_DIR/omablue-tailscale"
+    if [ ! -x "$tailscale_bin" ]; then
+      tailscale_bin=$(command -v omablue-tailscale 2>/dev/null || true)
+    fi
+
+    if [ -z "$tailscale_bin" ]; then
+      notify-send -u critical -a "Network" "VPN" "VPN scripts not found"
+      return
+    fi
+
+    if command -v tailscale &>/dev/null; then
+      local status_label
+      if tailscale status --json 2>/dev/null | awk -F'"' '/"BackendState"/{exit ($4=="Running")?0:1}'; then
+        local ts_ip=$(tailscale ip 2>/dev/null | head -1 || echo "?")
+        status_label="Connected ($ts_ip)"
+      else
+        status_label="Disconnected"
+      fi
+      local VPN_OPTIONS="󰦝 Toggle Tailscale  [$status_label]"
+      local SEL
+      SEL=$(echo -e "$VPN_OPTIONS" | rofi -dmenu -p "VPN" -i -width 35 -hover-select -me-select-entry '' -me-accept-entry MousePrimary)
+      case "$SEL" in
+        *"Toggle Tailscale"*)
+          "$tailscale_bin" toggle
+          ;;
+      esac
+    fi
+    return
+  fi
+
+  # Build VPN options menu with status
+  local VPN_OPTIONS=""
+  while IFS= read -r vpn; do
+    local name=$(get_vpn_name "$vpn")
+    local status=$(get_vpn_status "$vpn")
+    if [ -z "$VPN_OPTIONS" ]; then
+      VPN_OPTIONS="󰦝 Toggle $name  [$status]"
+    else
+      VPN_OPTIONS="$VPN_OPTIONS\n󰦝 Toggle $name  [$status]"
+    fi
+  done <<< "$installed_vpns"
+
+  local SEL
+  SEL=$(echo -e "$VPN_OPTIONS" | rofi -dmenu -p "VPN" -i -width 40 -hover-select -me-select-entry '' -me-accept-entry MousePrimary)
+
+  if [ -z "$SEL" ]; then
+    return
+  fi
+
+  # Extract provider from selection
+  local selected_vpn=""
+  if echo "$SEL" | grep -q "Tailscale"; then
+    selected_vpn="tailscale"
+  elif echo "$SEL" | grep -q "Mullvad"; then
+    selected_vpn="mullvad"
+  elif echo "$SEL" | grep -q "ProtonVPN"; then
+    selected_vpn="protonvpn"
+  elif echo "$SEL" | grep -q "IVPN"; then
+    selected_vpn="ivpn"
+  fi
+
+  if [ -n "$selected_vpn" ]; then
+    "$vpn_bin" "$selected_vpn" toggle
+  fi
+}
+
+# Main Menu
+MAIN_OPTIONS="󰖩 Connect\n󰖪 Disconnect\n󰀞 Toggle WiFi\n󱚹 Hotspot Manager\n󰦝 VPN"
+CHOSEN=$(echo -e "$MAIN_OPTIONS" | rofi -dmenu -p "Network" -i -width 25 -hover-select -me-select-entry '' -me-accept-entry MousePrimary)
+
+case "$CHOSEN" in
+*Connect)
+  # Rescan for fresh network list
+  nmcli device wifi rescan 2>/dev/null || true
+  sleep 1 # Brief pause for scan to complete
+
+  # Fetch list with bars and security status
+  WIFI_LIST=$(nmcli --terse --fields "SSID,BARS,SECURITY" device wifi list | awk -F: '$1 != "" {print $1 " | " $2 " | " $3}' | sort -u -t'|' -k1,1)
+
+  if [ -z "$WIFI_LIST" ]; then
+    notify-send -u critical -a "Network" "Error" "No networks found"
+    exit 1
+  fi
+
+  CHOSEN_SSID_LINE=$(echo -e "$WIFI_LIST" | rofi -dmenu -p "SSID" -i -hover-select -me-select-entry '' -me-accept-entry MousePrimary)
+  [ -z "$CHOSEN_SSID_LINE" ] && exit 0
+
+  SSID=$(echo "$CHOSEN_SSID_LINE" | cut -d'|' -f1 | xargs)
+
+  # Immediate feedback
+  notify-send -a "Network" "Connecting to $SSID..."
+
+  # Attempt connection, if fails, ask for password
+  if ! nmcli device wifi connect "$SSID" 2>/dev/null; then
+    PASS=$(rofi -dmenu -p "Password for $SSID" -password -me-select-entry '' -me-accept-entry MousePrimary)
+    if [ -z "$PASS" ]; then
+      notify-send -a "Network" "Cancelled" "Connection cancelled"
+      exit 0
+    fi
+    # Note: password is visible in /proc/*/cmdline; inherent nmcli limitation
+    if nmcli device wifi connect "$SSID" password "$PASS"; then
+      notify-send -a "Network" -i network-wireless-symbolic "Connected" "Successfully connected to $SSID"
+    else
+      notify-send -u critical -a "Network" "Error" "Failed to connect to $SSID"
+      exit 1
+    fi
+  else
+    notify-send -a "Network" -i network-wireless-symbolic "Connected" "Successfully connected to $SSID"
+  fi
+  ;;
+*Disconnect)
+  nmcli device disconnect "$INTERFACE" && notify-send -a "Network" "Disconnected"
+  ;;
+*Toggle*)
+  toggle_wifi
+  ;;
+*Hotspot*)
+  manage_hotspot
+  ;;
+*VPN*)
+  manage_vpn
+  ;;
+esac

@@ -1,0 +1,13 @@
+ROADMAP-UJUST-SETUP.md
+
+# Security — prevent accidental commit of sensitive data
+*.env
+.env.*
+*credentials*
+*secret*
+**/hotspot_pass
+**/*.key
+**/*.pem
+**/*.p12
+**/id_rsa*
+**/id_ed25519*

@@ -1,0 +1,68 @@
+#!/bin/bash
+set -euo pipefail
+
+# --- Secureblue Header ---
+# Maintain consistency for Homebrew and local Omablue scripts
+export PATH="/home/linuxbrew/.linuxbrew/bin:$HOME/.local/share/omablue/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+
+# Setup save directory
+SAVE_DIR="$HOME/Pictures/Screenshots"
+mkdir -p "$SAVE_DIR"
+TIMESTAMP=$(date +'%Y-%m-%d-%H%M%S')
+FILE_PATH="$SAVE_DIR/screenshot_$TIMESTAMP.png"
+
+# 1. Mode Selection Logic
+# If an argument is provided, use it directly to avoid Rofi conflicts
+if [ -n "$1" ]; then
+  CHOICE="$1"
+else
+  # If Rofi is already active, we cannot launch another instance
+  # We default to 'Select Area' which works over existing overlays
+  if pgrep -x "rofi" >/dev/null 2>&1; then
+    CHOICE="Select Area"
+  else
+    # Launch Rofi menu for manual selection
+    CHOICE=$(echo -e "Select Area\nActive Window\nFullscreen" | rofi -dmenu -p "Capture" -config ~/.config/rofi/config.rasi) || true
+  fi
+fi
+
+# Exit if selection is cancelled (Esc)
+[ -z "$CHOICE" ] && exit 0
+
+case $CHOICE in
+"Select Area")
+  # Slurp creates a native Wayland overlay to select screen regions
+  GEOMETRY=$(slurp -b "#00000044" -c "#cba6f7" -w 2) || true
+  ;;
+"Active Window")
+  # Query the Sway tree to find the coordinates of the focused window
+  GEOMETRY=$(swaymsg -t get_tree | jq -r '.. | select(.focused? == true).rect | "\(.x),\(.y) \(.width)x\(.height)"')
+  ;;
+"Fullscreen")
+  # Empty geometry tells grim to capture the entire output
+  GEOMETRY=""
+  ;;
+*)
+  exit 0
+  ;;
+esac
+
+# 2. Validation and Execution
+# Exit if the user cancelled the area selection (slurp)
+if [ "$CHOICE" == "Select Area" ] && [ -z "$GEOMETRY" ]; then
+  exit 0
+fi
+
+# Execute capture using grim
+if [ -z "$GEOMETRY" ]; then
+  grim "$FILE_PATH"
+else
+  grim -g "$GEOMETRY" "$FILE_PATH"
+fi
+
+# 3. Notification and Clipboard
+# Use Wayland-native wl-copy and notify-send for feedback
+if [ -f "$FILE_PATH" ]; then
+  wl-copy <"$FILE_PATH"
+  notify-send "Omablue" "Screenshot captured and copied to clipboard" -i camera-photo
+fi

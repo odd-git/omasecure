@@ -1,0 +1,421 @@
+.
+├── ./assets
+│   └── ./assets/secureblue-blue-blurred.png
+├── ./bin
+│   ├── ./bin/new-nmcli
+│   ├── ./bin/omablue-battery-monitor
+│   ├── ./bin/omablue-battery-remaining
+│   ├── ./bin/omablue-bluetooth
+│   ├── ./bin/omablue-brew-install
+│   ├── ./bin/omablue-brew-remove
+│   ├── ./bin/omablue-flatpak-install
+│   ├── ./bin/omablue-flatpak-remove
+│   ├── ./bin/omablue-install-ujust
+│   ├── ./bin/omablue-launch-trivalent
+│   ├── ./bin/omablue-launch-tui
+│   ├── ./bin/omablue-launch-webapp
+│   ├── ./bin/omablue-menu
+│   ├── ./bin/omablue-menu-keybindings
+│   ├── ./bin/omablue-mixer
+│   ├── ./bin/omablue-nmcli
+│   ├── ./bin/omablue-screenshot
+│   ├── ./bin/omablue-theme-current
+│   ├── ./bin/omablue-theme-list
+│   ├── ./bin/omablue-theme-selector
+│   ├── ./bin/omablue-theme-set
+│   ├── ./bin/omablue-theme-set-gnome
+│   ├── ./bin/omablue-tui-install
+│   ├── ./bin/omablue-tui-remove
+│   ├── ./bin/omablue-webapp-install
+│   ├── ./bin/omablue-webapp-remove
+│   └── ./bin/omarchy-battery-remaining
+├── ./config
+│   ├── ./config/dunst
+│   │   ├── ./config/dunst/current_theme.conf -> /home/mino/.config/omablue/themes/catppuccin/dunst.conf
+│   │   ├── ./config/dunst/dunstrc
+│   │   └── ./config/dunst/dunstrc.base
+│   ├── ./config/foot
+│   │   └── ./config/foot/foot.ini
+│   ├── ./config/gtk-3.0
+│   │   ├── ./config/gtk-3.0/bookmarks
+│   │   └── ./config/gtk-3.0/settings.ini
+│   ├── ./config/nvim
+│   │   ├── ./config/nvim/init.lua
+│   │   ├── ./config/nvim/lazy-lock.json
+│   │   ├── ./config/nvim/lazyvim.json
+│   │   ├── ./config/nvim/LICENSE
+│   │   ├── ./config/nvim/lua
+│   │   │   ├── ./config/nvim/lua/config
+│   │   │   │   ├── ./config/nvim/lua/config/autocmds.lua
+│   │   │   │   ├── ./config/nvim/lua/config/keymaps.lua
+│   │   │   │   ├── ./config/nvim/lua/config/lazy.lua
+│   │   │   │   └── ./config/nvim/lua/config/options.lua
+│   │   │   └── ./config/nvim/lua/plugins
+│   │   │       ├── ./config/nvim/lua/plugins/all-themes.lua
+│   │   │       ├── ./config/nvim/lua/plugins/disable-news-alert.lua
+│   │   │       ├── ./config/nvim/lua/plugins/example.lua
+│   │   │       ├── ./config/nvim/lua/plugins/omarchy-theme-hotreload.lua
+│   │   │       ├── ./config/nvim/lua/plugins/snacks-animated-scrolling-off.lua
+│   │   │       └── ./config/nvim/lua/plugins/theme.lua -> /home/mino/.config/omarchy/current/theme/neovim.lua
+│   │   ├── ./config/nvim/plugin
+│   │   │   └── ./config/nvim/plugin/after
+│   │   │       └── ./config/nvim/plugin/after/transparency.lua
+│   │   ├── ./config/nvim/README.md
+│   │   └── ./config/nvim/stylua.toml
+│   ├── ./config/omablue
+│   │   ├── ./config/omablue/current
+│   │   └── ./config/omablue/themes -> /home/mino/.local/share/omablue/themes
+│   ├── ./config/rofi
+│   │   ├── ./config/rofi/catppuccin-default.rasi
+│   │   ├── ./config/rofi/catppuccin-mocha.rasi
+│   │   ├── ./config/rofi/config.rasi
+│   │   ├── ./config/rofi/config.rasi.old
+│   │   ├── ./config/rofi/current.rasi
+│   │   ├── ./config/rofi/my_theme.rasi
+│   │   └── ./config/rofi/rofi
+│   │       ├── ./config/rofi/rofi/assets
+│   │       │   ├── ./config/rofi/rofi/assets/frappe.webp
+│   │       │   ├── ./config/rofi/rofi/assets/latte.webp
+│   │       │   ├── ./config/rofi/rofi/assets/macchiato.webp
+│   │       │   ├── ./config/rofi/rofi/assets/mocha.webp
+│   │       │   └── ./config/rofi/rofi/assets/preview.webp
+│   │       ├── ./config/rofi/rofi/catppuccin-default.rasi
+│   │       ├── ./config/rofi/rofi/LICENSE
+│   │       ├── ./config/rofi/rofi/README.md
+│   │       ├── ./config/rofi/rofi/rofi.tera
+│   │       └── ./config/rofi/rofi/themes
+│   │           ├── ./config/rofi/rofi/themes/catppuccin-frappe.rasi
+│   │           ├── ./config/rofi/rofi/themes/catppuccin-latte.rasi
+│   │           ├── ./config/rofi/rofi/themes/catppuccin-macchiato.rasi
+│   │           └── ./config/rofi/rofi/themes/catppuccin-mocha.rasi
+│   ├── ./config/sway
+│   │   ├── ./config/sway/background
+│   │   ├── ./config/sway/bindings
+│   │   ├── ./config/sway/catppuccin-mocha.txt
+│   │   ├── ./config/sway/config
+│   │   ├── ./config/sway/env
+│   │   ├── ./config/sway/idle
+│   │   ├── ./config/sway/input
+│   │   ├── ./config/sway/look
+│   │   ├── ./config/sway/unbindsym
+│   │   ├── ./config/sway/user-bindings
+│   │   ├── ./config/sway/user-windows-rules
+│   │   └── ./config/sway/windows_rules
+│   ├── ./config/swaylock
+│   │   └── ./config/swaylock/config
+│   ├── ./config/Thunar
+│   │   ├── ./config/Thunar/accels.scm
+│   │   └── ./config/Thunar/uca.xml
+│   └── ./config/waybar
+│       ├── ./config/waybar/cat
+│       │   ├── ./config/waybar/cat/config.jsonc
+│       │   └── ./config/waybar/cat/style.css
+│       ├── ./config/waybar/config.jsonc
+│       ├── ./config/waybar/config.jsonc.bak
+│       ├── ./config/waybar/default
+│       │   ├── ./config/waybar/default/config.jsonc
+│       │   └── ./config/waybar/default/style.css
+│       ├── ./config/waybar/omarchy
+│       └── ./config/waybar/style.css
+├── ./omarchy
+│   ├── ./omarchy/omarchy-battery-monitor
+│   ├── ./omarchy/omarchy-battery-remaining
+│   ├── ./omarchy/omarchy-branch-set
+│   ├── ./omarchy/omarchy-channel-set
+│   ├── ./omarchy/omarchy-cmd-apple-display-brightness
+│   ├── ./omarchy/omarchy-cmd-audio-switch
+│   ├── ./omarchy/omarchy-cmd-first-run
+│   ├── ./omarchy/omarchy-cmd-missing
+│   ├── ./omarchy/omarchy-cmd-present
+│   ├── ./omarchy/omarchy-cmd-reboot
+│   ├── ./omarchy/omarchy-cmd-screenrecord
+│   ├── ./omarchy/omarchy-cmd-screensaver
+│   ├── ./omarchy/omarchy-cmd-screenshot
+│   ├── ./omarchy/omarchy-cmd-share
+│   ├── ./omarchy/omarchy-cmd-shutdown
+│   ├── ./omarchy/omarchy-cmd-terminal-cwd
+│   ├── ./omarchy/omarchy-debug
+│   ├── ./omarchy/omarchy-dev-add-migration
+│   ├── ./omarchy/omarchy-drive-info
+│   ├── ./omarchy/omarchy-drive-select
+│   ├── ./omarchy/omarchy-drive-set-password
+│   ├── ./omarchy/omarchy-font-current
+│   ├── ./omarchy/omarchy-font-list
+│   ├── ./omarchy/omarchy-font-set
+│   ├── ./omarchy/omarchy-hook
+│   ├── ./omarchy/omarchy-hyprland-window-close-all
+│   ├── ./omarchy/omarchy-hyprland-window-pop
+│   ├── ./omarchy/omarchy-hyprland-workspace-toggle-gaps
+│   ├── ./omarchy/omarchy-install-chromium-google-account
+│   ├── ./omarchy/omarchy-install-dev-env
+│   ├── ./omarchy/omarchy-install-docker-dbs
+│   ├── ./omarchy/omarchy-install-dropbox
+│   ├── ./omarchy/omarchy-install-steam
+│   ├── ./omarchy/omarchy-install-tailscale
+│   ├── ./omarchy/omarchy-install-terminal
+│   ├── ./omarchy/omarchy-install-vscode
+│   ├── ./omarchy/omarchy-install-xbox-controllers
+│   ├── ./omarchy/omarchy-launch-about
+│   ├── ./omarchy/omarchy-launch-bluetooth
+│   ├── ./omarchy/omarchy-launch-browser
+│   ├── ./omarchy/omarchy-launch-editor
+│   ├── ./omarchy/omarchy-launch-floating-terminal-with-presentation
+│   ├── ./omarchy/omarchy-launch-or-focus
+│   ├── ./omarchy/omarchy-launch-or-focus-tui
+│   ├── ./omarchy/omarchy-launch-or-focus-webapp
+│   ├── ./omarchy/omarchy-launch-screensaver
+│   ├── ./omarchy/omarchy-launch-tui
+│   ├── ./omarchy/omarchy-launch-walker
+│   ├── ./omarchy/omarchy-launch-webapp_old
+│   ├── ./omarchy/omarchy-launch-webapp-profiles
+│   ├── ./omarchy/omarchy-launch-wifi
+│   ├── ./omarchy/omarchy-lock-screen
+│   ├── ./omarchy/omarchy-menu
+│   ├── ./omarchy/omarchy-menu-keybindings
+│   ├── ./omarchy/omarchy-migrate
+│   ├── ./omarchy/omarchy-notification-dismiss
+│   ├── ./omarchy/omarchy-pkg-add
+│   ├── ./omarchy/omarchy-pkg-aur-accessible
+│   ├── ./omarchy/omarchy-pkg-aur-install
+│   ├── ./omarchy/omarchy-pkg-drop
+│   ├── ./omarchy/omarchy-pkg-install
+│   ├── ./omarchy/omarchy-pkg-missing
+│   ├── ./omarchy/omarchy-pkg-pinned
+│   ├── ./omarchy/omarchy-pkg-present
+│   ├── ./omarchy/omarchy-pkg-remove
+│   ├── ./omarchy/omarchy-powerprofiles-list
+│   ├── ./omarchy/omarchy-refresh-applications
+│   ├── ./omarchy/omarchy-refresh-config
+│   ├── ./omarchy/omarchy-refresh-fastfetch
+│   ├── ./omarchy/omarchy-refresh-hypridle
+│   ├── ./omarchy/omarchy-refresh-hyprland
+│   ├── ./omarchy/omarchy-refresh-hyprlock
+│   ├── ./omarchy/omarchy-refresh-hyprsunset
+│   ├── ./omarchy/omarchy-refresh-limine
+│   ├── ./omarchy/omarchy-refresh-pacman
+│   ├── ./omarchy/omarchy-refresh-plymouth
+│   ├── ./omarchy/omarchy-refresh-swayosd
+│   ├── ./omarchy/omarchy-refresh-walker
+│   ├── ./omarchy/omarchy-refresh-waybar
+│   ├── ./omarchy/omarchy-reinstall
+│   ├── ./omarchy/omarchy-reset-sudo
+│   ├── ./omarchy/omarchy-restart-app
+│   ├── ./omarchy/omarchy-restart-bluetooth
+│   ├── ./omarchy/omarchy-restart-hypridle
+│   ├── ./omarchy/omarchy-restart-hyprsunset
+│   ├── ./omarchy/omarchy-restart-pipewire
+│   ├── ./omarchy/omarchy-restart-swayosd
+│   ├── ./omarchy/omarchy-restart-terminal
+│   ├── ./omarchy/omarchy-restart-walker
+│   ├── ./omarchy/omarchy-restart-waybar
+│   ├── ./omarchy/omarchy-restart-wifi
+│   ├── ./omarchy/omarchy-restart-xcompose
+│   ├── ./omarchy/omarchy-setup-dns
+│   ├── ./omarchy/omarchy-setup-fido2
+│   ├── ./omarchy/omarchy-setup-fingerprint
+│   ├── ./omarchy/omarchy-show-done
+│   ├── ./omarchy/omarchy-show-logo
+│   ├── ./omarchy/omarchy-snapshot
+│   ├── ./omarchy/omarchy-state
+│   ├── ./omarchy/omarchy-theme-bg-next
+│   ├── ./omarchy/omarchy-theme-current
+│   ├── ./omarchy/omarchy-theme-install
+│   ├── ./omarchy/omarchy-theme-list
+│   ├── ./omarchy/omarchy-theme-next
+│   ├── ./omarchy/omarchy-theme-remove
+│   ├── ./omarchy/omarchy-theme-set
+│   ├── ./omarchy/omarchy-theme-set-browser
+│   ├── ./omarchy/omarchy-theme-set-cursor
+│   ├── ./omarchy/omarchy-theme-set-gnome
+│   ├── ./omarchy/omarchy-theme-set-obsidian
+│   ├── ./omarchy/omarchy-theme-set-vscode
+│   ├── ./omarchy/omarchy-theme-update
+│   ├── ./omarchy/omarchy-toggle-idle
+│   ├── ./omarchy/omarchy-toggle-nightlight
+│   ├── ./omarchy/omarchy-toggle-screensaver
+│   ├── ./omarchy/omarchy-toggle-waybar
+│   ├── ./omarchy/omarchy-tui-remove
+│   ├── ./omarchy/omarchy-tz-select
+│   ├── ./omarchy/omarchy-update
+│   ├── ./omarchy/omarchy-update-available
+│   ├── ./omarchy/omarchy-update-available-reset
+│   ├── ./omarchy/omarchy-update-branch
+│   ├── ./omarchy/omarchy-update-confirm
+│   ├── ./omarchy/omarchy-update-firmware
+│   ├── ./omarchy/omarchy-update-git
+│   ├── ./omarchy/omarchy-update-keyring
+│   ├── ./omarchy/omarchy-update-perform
+│   ├── ./omarchy/omarchy-update-restart
+│   ├── ./omarchy/omarchy-update-system-pkgs
+│   ├── ./omarchy/omarchy-update-time
+│   ├── ./omarchy/omarchy-update-without-idle
+│   ├── ./omarchy/omarchy-upload-log
+│   ├── ./omarchy/omarchy-version
+│   ├── ./omarchy/omarchy-version-branch
+│   ├── ./omarchy/omarchy-version-channel
+│   ├── ./omarchy/omarchy-version-pkgs
+│   ├── ./omarchy/omarchy-webapp-handler-hey
+│   ├── ./omarchy/omarchy-webapp-handler-zoom
+│   ├── ./omarchy/omarchy-webapp-install
+│   ├── ./omarchy/omarchy-webapp-install-old
+│   ├── ./omarchy/omarchy-webapp-remove
+│   └── ./omarchy/omarchy-windows-vm
+├── ./README.md
+├── ./setup
+│   ├── ./setup/omablue-battery-setup
+│   └── ./setup/omablue-setup.sh
+├── ./themes
+│   ├── ./themes/catppuccin
+│   │   ├── ./themes/catppuccin/backgrounds
+│   │   │   ├── ./themes/catppuccin/backgrounds/1-catppuccin.png
+│   │   │   ├── ./themes/catppuccin/backgrounds/2-cat-waves-mocha.png
+│   │   │   └── ./themes/catppuccin/backgrounds/3-cat-blue-eye-mocha.png
+│   │   ├── ./themes/catppuccin/btop.theme
+│   │   ├── ./themes/catppuccin/colors.toml
+│   │   ├── ./themes/catppuccin/dunst.conf
+│   │   ├── ./themes/catppuccin/ghostty.conf
+│   │   ├── ./themes/catppuccin/icons.theme
+│   │   ├── ./themes/catppuccin/neovim.lua
+│   │   ├── ./themes/catppuccin/preview.png
+│   │   └── ./themes/catppuccin/vscode.json
+│   ├── ./themes/catppuccin-latte
+│   │   ├── ./themes/catppuccin-latte/backgrounds
+│   │   │   └── ./themes/catppuccin-latte/backgrounds/1-catppuccin-latte.png
+│   │   ├── ./themes/catppuccin-latte/btop.theme
+│   │   ├── ./themes/catppuccin-latte/colors.toml
+│   │   ├── ./themes/catppuccin-latte/icons.theme
+│   │   ├── ./themes/catppuccin-latte/light.mode
+│   │   ├── ./themes/catppuccin-latte/neovim.lua
+│   │   ├── ./themes/catppuccin-latte/preview.png
+│   │   └── ./themes/catppuccin-latte/vscode.json
+│   ├── ./themes/ethereal
+│   │   ├── ./themes/ethereal/backgrounds
+│   │   │   ├── ./themes/ethereal/backgrounds/1.jpg
+│   │   │   └── ./themes/ethereal/backgrounds/2.jpg
+│   │   ├── ./themes/ethereal/btop.theme
+│   │   ├── ./themes/ethereal/colors.toml
+│   │   ├── ./themes/ethereal/icons.theme
+│   │   ├── ./themes/ethereal/neovim.lua
+│   │   ├── ./themes/ethereal/preview.png
+│   │   └── ./themes/ethereal/vscode.json
+│   ├── ./themes/everforest
+│   │   ├── ./themes/everforest/backgrounds
+│   │   │   └── ./themes/everforest/backgrounds/1-everforest.jpg
+│   │   ├── ./themes/everforest/btop.theme
+│   │   ├── ./themes/everforest/colors.toml
+│   │   ├── ./themes/everforest/icons.theme
+│   │   ├── ./themes/everforest/neovim.lua
+│   │   ├── ./themes/everforest/preview.png
+│   │   └── ./themes/everforest/vscode.json
+│   ├── ./themes/flexoki-light
+│   │   ├── ./themes/flexoki-light/backgrounds
+│   │   │   ├── ./themes/flexoki-light/backgrounds/1-flexoki-light-orb.png
+│   │   │   └── ./themes/flexoki-light/backgrounds/2-flexoki-light-omarchy.png
+│   │   ├── ./themes/flexoki-light/btop.theme
+│   │   ├── ./themes/flexoki-light/chromium.theme
+│   │   ├── ./themes/flexoki-light/colors.toml
+│   │   ├── ./themes/flexoki-light/icons.theme
+│   │   ├── ./themes/flexoki-light/light.mode
+│   │   ├── ./themes/flexoki-light/neovim.lua
+│   │   ├── ./themes/flexoki-light/preview.png
+│   │   └── ./themes/flexoki-light/vscode.json
+│   ├── ./themes/gruvbox
+│   │   ├── ./themes/gruvbox/backgrounds
+│   │   │   ├── ./themes/gruvbox/backgrounds/1-grubox.jpg
+│   │   │   └── ./themes/gruvbox/backgrounds/2-gruvbox.jpg
+│   │   ├── ./themes/gruvbox/btop.theme
+│   │   ├── ./themes/gruvbox/colors.toml
+│   │   ├── ./themes/gruvbox/icons.theme
+│   │   ├── ./themes/gruvbox/neovim.lua
+│   │   ├── ./themes/gruvbox/preview.png
+│   │   └── ./themes/gruvbox/vscode.json
+│   ├── ./themes/hackerman
+│   │   ├── ./themes/hackerman/backgrounds
+│   │   │   ├── ./themes/hackerman/backgrounds/1.jpg
+│   │   │   └── ./themes/hackerman/backgrounds/2.jpg
+│   │   ├── ./themes/hackerman/btop.theme
+│   │   ├── ./themes/hackerman/colors.toml
+│   │   ├── ./themes/hackerman/icons.theme
+│   │   ├── ./themes/hackerman/neovim.lua
+│   │   ├── ./themes/hackerman/preview.png
+│   │   └── ./themes/hackerman/vscode.json
+│   ├── ./themes/kanagawa
+│   │   ├── ./themes/kanagawa/backgrounds
+│   │   │   └── ./themes/kanagawa/backgrounds/1-kanagawa.jpg
+│   │   ├── ./themes/kanagawa/btop.theme
+│   │   ├── ./themes/kanagawa/colors.toml
+│   │   ├── ./themes/kanagawa/hyprland.conf
+│   │   ├── ./themes/kanagawa/icons.theme
+│   │   ├── ./themes/kanagawa/neovim.lua
+│   │   ├── ./themes/kanagawa/preview.png
+│   │   └── ./themes/kanagawa/vscode.json
+│   ├── ./themes/matte-black
+│   │   ├── ./themes/matte-black/backgrounds
+│   │   │   ├── ./themes/matte-black/backgrounds/0-ship-at-sea.jpg
+│   │   │   ├── ./themes/matte-black/backgrounds/1-matte-black.jpg
+│   │   │   └── ./themes/matte-black/backgrounds/2-matte-black-hands.jpg
+│   │   ├── ./themes/matte-black/btop.theme
+│   │   ├── ./themes/matte-black/colors.toml
+│   │   ├── ./themes/matte-black/icons.theme
+│   │   ├── ./themes/matte-black/neovim.lua
+│   │   ├── ./themes/matte-black/preview.png
+│   │   └── ./themes/matte-black/vscode.json
+│   ├── ./themes/nord
+│   │   ├── ./themes/nord/backgrounds
+│   │   │   ├── ./themes/nord/backgrounds/1-nord.png
+│   │   │   └── ./themes/nord/backgrounds/2-nord.png
+│   │   ├── ./themes/nord/btop.theme
+│   │   ├── ./themes/nord/colors.toml
+│   │   ├── ./themes/nord/icons.theme
+│   │   ├── ./themes/nord/neovim.lua
+│   │   ├── ./themes/nord/preview.png
+│   │   └── ./themes/nord/vscode.json
+│   ├── ./themes/osaka-jade
+│   │   ├── ./themes/osaka-jade/backgrounds
+│   │   │   ├── ./themes/osaka-jade/backgrounds/1-osaka-jade-bg.jpg
+│   │   │   ├── ./themes/osaka-jade/backgrounds/2-osaka-jade-bg.jpg
+│   │   │   └── ./themes/osaka-jade/backgrounds/3-osaka-jade-bg.jpg
+│   │   ├── ./themes/osaka-jade/btop.theme
+│   │   ├── ./themes/osaka-jade/colors.toml
+│   │   ├── ./themes/osaka-jade/icons.theme
+│   │   ├── ./themes/osaka-jade/neovim.lua
+│   │   ├── ./themes/osaka-jade/preview.png
+│   │   └── ./themes/osaka-jade/vscode.json
+│   ├── ./themes/ristretto
+│   │   ├── ./themes/ristretto/backgrounds
+│   │   │   ├── ./themes/ristretto/backgrounds/1-ristretto.jpg
+│   │   │   ├── ./themes/ristretto/backgrounds/2-ristretto.jpg
+│   │   │   └── ./themes/ristretto/backgrounds/3-ristretto.jpg
+│   │   ├── ./themes/ristretto/btop.theme
+│   │   ├── ./themes/ristretto/colors.toml
+│   │   ├── ./themes/ristretto/icons.theme
+│   │   ├── ./themes/ristretto/neovim.lua
+│   │   ├── ./themes/ristretto/preview.png
+│   │   └── ./themes/ristretto/vscode.json
+│   ├── ./themes/rose-pine
+│   │   ├── ./themes/rose-pine/backgrounds
+│   │   │   ├── ./themes/rose-pine/backgrounds/1-rose-pine.jpg
+│   │   │   ├── ./themes/rose-pine/backgrounds/2-wave-light.png
+│   │   │   └── ./themes/rose-pine/backgrounds/3-leafy-dawn-omarchy.png
+│   │   ├── ./themes/rose-pine/btop.theme
+│   │   ├── ./themes/rose-pine/chromium.theme
+│   │   ├── ./themes/rose-pine/colors.toml
+│   │   ├── ./themes/rose-pine/icons.theme
+│   │   ├── ./themes/rose-pine/light.mode
+│   │   ├── ./themes/rose-pine/neovim.lua
+│   │   ├── ./themes/rose-pine/preview.png
+│   │   └── ./themes/rose-pine/vscode.json
+│   └── ./themes/tokyo-night
+│       ├── ./themes/tokyo-night/backgrounds
+│       │   ├── ./themes/tokyo-night/backgrounds/1-scenery-pink-lakeside-sunset-lake-landscape-scenic-panorama-7680x3215-144.png
+│       │   ├── ./themes/tokyo-night/backgrounds/2-Pawel-Czerwinski-Abstract-Purple-Blue.jpg
+│       │   └── ./themes/tokyo-night/backgrounds/3-Milad-Fakurian-Abstract-Purple-Blue.jpg
+│       ├── ./themes/tokyo-night/btop.theme
+│       ├── ./themes/tokyo-night/colors.toml
+│       ├── ./themes/tokyo-night/icons.theme
+│       ├── ./themes/tokyo-night/neovim.lua
+│       ├── ./themes/tokyo-night/preview.png
+│       └── ./themes/tokyo-night/vscode.json
+└── ./tree.txt
+
+58 directories, 361 files

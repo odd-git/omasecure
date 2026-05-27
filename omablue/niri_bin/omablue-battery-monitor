@@ -1,0 +1,40 @@
+#!/bin/bash
+set -euo pipefail
+# Omablue Battery Monitor - Secureblue Edition
+# Handles Low (20%) and Full (>=98%) notifications
+
+LOW_THRESHOLD=20
+FULL_THRESHOLD=98
+LOW_FLAG="$XDG_RUNTIME_DIR/omablue_bat_low"
+FULL_FLAG="$XDG_RUNTIME_DIR/omablue_bat_full"
+
+# Fetch stats
+BAT_DEV=$(upower -e | grep 'BAT' | head -n1)
+[[ -z "$BAT_DEV" ]] && exit 0
+UP_INFO=$(upower -i "$BAT_DEV")
+LEVEL=$($HOME/.local/share/omablue/bin/omablue-battery-remaining)
+STATE=$(echo "$UP_INFO" | awk '/state/ {print $2}')
+
+# --- Logic: Low Battery (20%) ---
+if [[ "$STATE" == "discharging" && "$LEVEL" -le "$LOW_THRESHOLD" ]]; then
+  if [[ ! -f "$LOW_FLAG" ]]; then
+    notify-send -u critical -a "System" -h int:value:"$LEVEL" -i battery-caution \
+      "󱐋 Low Battery: ${LEVEL}%" "Connect charger to maintain workflow."
+    touch "$LOW_FLAG"
+  fi
+else
+  # Reset low flag if charging or back above threshold
+  [[ "$LEVEL" -gt "$LOW_THRESHOLD" || "$STATE" == "charging" ]] && rm -f "$LOW_FLAG"
+fi
+
+# --- Logic: Full Charge (98%+) ---
+if [[ ("$STATE" == "fully-charged" || "$STATE" == "charging") && "$LEVEL" -ge "$FULL_THRESHOLD" ]]; then
+  if [[ ! -f "$FULL_FLAG" ]]; then
+    notify-send -u normal -a "System" -h int:value:"$LEVEL" -i battery-full-charging \
+      "󰂄 Battery Full: ${LEVEL}%" "Unplug to preserve battery health."
+    touch "$FULL_FLAG"
+  fi
+else
+  # Reset full flag once you start using the battery again
+  [[ "$STATE" == "discharging" ]] && rm -f "$FULL_FLAG"
+fi

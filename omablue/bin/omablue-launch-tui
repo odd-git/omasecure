@@ -1,0 +1,43 @@
+#!/bin/bash
+# omablue-launch-tui
+# Launches a TUI app in the available terminal, setting app-id/title for WM rules.
+# Arg 1: App ID / window title (e.g., "TUI.float" or "TUI.tile")
+# Arg 2: Command to run (e.g., "nvim", "yazi")
+# Arg 3: Optional window size in COLSxROWS (e.g., "160x40", foot only)
+
+APP_ID="${1:-TUI.tile}"
+CMD_EXEC="$2"
+WINDOW_SIZE="${3:-}"
+
+export PATH="$HOME/.local/share/omablue/bin:$HOME/.local/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/usr/local/bin:/usr/bin:/bin:$PATH"
+
+if [[ -z "$CMD_EXEC" ]]; then
+  notify-send -u critical "Omablue Error" "No command provided to launcher."
+  exit 1
+fi
+
+if [[ "$CMD_EXEC" =~ [\;\&\|\`\$\(] ]]; then
+  notify-send -u critical "Omablue Error" "Invalid command in launcher."
+  exit 1
+fi
+
+if command -v foot &>/dev/null; then
+  SIZE_ARG=()
+  [[ -n "$WINDOW_SIZE" ]] && SIZE_ARG=(--override "main.initial-window-size-chars=$WINDOW_SIZE")
+  exec foot --app-id="$APP_ID" "${SIZE_ARG[@]}" sh -c "$CMD_EXEC"
+elif command -v ghostty &>/dev/null; then
+  exec ghostty --class="$APP_ID" --title="$APP_ID" -e sh -c "$CMD_EXEC"
+elif command -v ptyxis &>/dev/null; then
+  exec ptyxis --title "$APP_ID" -- sh -c "$CMD_EXEC"
+elif command -v alacritty &>/dev/null; then
+  exec alacritty --class "$APP_ID" -e sh -c "$CMD_EXEC"
+elif command -v kitty &>/dev/null; then
+  exec kitty --class "$APP_ID" sh -c "$CMD_EXEC"
+elif command -v wezterm &>/dev/null; then
+  exec wezterm start --class "$APP_ID" -- sh -c "$CMD_EXEC"
+elif command -v gnome-terminal &>/dev/null; then
+  exec gnome-terminal --class="$APP_ID" -- sh -c "$CMD_EXEC"
+else
+  notify-send -u critical "Omablue Error" "No supported terminal emulator found."
+  exit 1
+fi

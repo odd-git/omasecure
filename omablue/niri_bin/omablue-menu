@@ -1,0 +1,144 @@
+#!/bin/bash
+set -euo pipefail
+
+# --- 1. Global Environment & Path Injection ---
+HOMEBREW_PATHS="/home/linuxbrew/.linuxbrew/bin:/var/home/linuxbrew/.linuxbrew/bin"
+LOCAL_PATHS="$HOME/.local/bin:$HOME/.local/share/omablue/bin"
+export PATH="$HOMEBREW_PATHS:$LOCAL_PATHS:/usr/local/bin:/usr/bin:/bin:$PATH"
+
+OMABIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export PATH="$OMABIN:$PATH"
+
+BACK_TO_EXIT=false
+[[ -n "${1-}" ]] && BACK_TO_EXIT=true
+
+# --- 2. Core Functions ---
+
+back_to() {
+  if [[ "$BACK_TO_EXIT" == "true" ]]; then
+    exit 0
+  else
+    show_main_menu
+  fi
+}
+
+menu() {
+  local prompt="$1"
+  shift
+  local tmpfile
+  tmpfile=$(mktemp)
+  trap "rm -f '$tmpfile'" EXIT
+
+  local gum_cmd="gum choose"
+  for arg in "$@"; do
+    gum_cmd+=" \"$arg\""
+  done
+  gum_cmd+=" --header \"$prompt\" --height 10"
+
+  eval "$gum_cmd" > "$tmpfile" 2>/dev/null || true
+
+  if [[ -s "$tmpfile" ]]; then
+    cat "$tmpfile"
+  else
+    exit 0
+  fi
+}
+
+run_tui() {
+  local script_path="$1"
+
+  if [[ -x "$script_path" ]]; then
+    # Use omablue-launch wrapper to handle terminal execution
+    nohup "$OMABIN/omablue-launch" "$script_path" >/dev/null 2>&1 &
+  else
+    notify-send -u critical "Error" "Script not found: $(basename "$script_path")"
+  fi
+}
+# --- 3. Submenus ---
+
+show_install_menu() {
+  local choice
+  choice=$(menu "Install" "󰖟 Webapp" " Brew" "󰆍 Tui" " Flatpak")
+  case "${choice,,}" in
+  *webapp*) run_tui "$OMABIN/omablue-webapp-install" ;;
+  *brew*) run_tui "$OMABIN/omablue-brew-install" ;;
+  *tui*) run_tui "$OMABIN/omablue-tui-install" ;;
+  *flatpak*) run_tui "$OMABIN/omablue-flatpak-install" ;;
+  *) back_to ;;
+  esac
+}
+
+show_remove_menu() {
+  local choice
+  choice=$(menu "Remove" "󰖟 Webapp" " Brew" "󰆍 Tui" " Flatpak")
+  case "${choice,,}" in
+  *webapp*) run_tui "$OMABIN/omablue-webapp-remove" ;;
+  *brew*) run_tui "$OMABIN/omablue-brew-remove" ;;
+  *tui*) run_tui "$OMABIN/omablue-tui-remove" ;;
+  *flatpak*) run_tui "$OMABIN/omablue-flatpak-remove" ;;
+  *) back_to ;;
+  esac
+}
+
+show_setup_menu() {
+  local choice
+  choice=$(menu "Setup" "󱓞 Theme" "󰂯 Bluetooth" "󰓃 Mixer" "󰖩 Network" "󰒍 Sync Setup" " Ujust" " Sync")
+  case "${choice,,}" in
+  *theme*) run_tui "$OMABIN/omablue-theme-selector" ;;
+  *bluetooth*) run_tui "$OMABIN/omablue-bluetooth" ;;
+  *mixer*) run_tui "$OMABIN/omablue-mixer" ;;
+  *network*) run_tui "$OMABIN/omablue-nmcli" ;;
+  *sync\ setup*) run_tui "$OMABIN/omasync-setup" ;;
+  *ujust*) run_tui "$OMABIN/omablue-install-ujust" ;;
+  *sync*) run_tui "$OMABIN/omasync" ;;
+  *) back_to ;;
+  esac
+}
+
+show_system_menu() {
+  local choice
+  choice=$(menu "System" " Lock" "󰜉 Restart" "󰐥 Shutdown")
+  case "${choice,,}" in
+  *lock*) swaylock ;;
+  *restart*)
+    if gum confirm "Confirm Reboot?"; then
+      systemctl reboot
+    fi
+    ;;
+  *shutdown*)
+    if gum confirm "Confirm Shutdown?"; then
+      systemctl poweroff
+    fi
+    ;;
+  *) back_to ;;
+  esac
+}
+
+# --- 4. Main Menu ---
+# Note: show_main_menu and back_to use recursive calls; safe for interactive use
+
+launch_app() {
+  # Try to use fzf for app selection, fallback to message if not available
+  if command -v fzf &>/dev/null; then
+    local app
+    app=$(compgen -c | sort -u | fzf --preview 'which {}' --preview-window right:20%) || return
+    command -v "$app" >/dev/null && "$app" &
+  else
+    notify-send -u normal "Info" "App launcher requires fzf. Install it to use this feature."
+  fi
+}
+
+show_main_menu() {
+  local choice
+  choice=$(menu "Go" "󰀻 Apps" "󰐕 Install" "󰛌 Remove" " Setup" " System")
+  case "${choice,,}" in
+  *apps*) launch_app ;;
+  *install*) show_install_menu ;;
+  *remove*) show_remove_menu ;;
+  *setup*) show_setup_menu ;;
+  *system*) show_system_menu ;;
+  *) [[ -n "$choice" ]] && show_main_menu ;;
+  esac
+}
+
+show_main_menu

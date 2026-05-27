@@ -1,0 +1,27 @@
+#!/bin/bash
+set -euo pipefail
+
+# Wrapper for Noctalia to launch scripts in a terminal
+# Usage: omablue-launch <script_path> [args...]
+
+script_path="${1:-}"
+shift || true
+
+if [[ -z "$script_path" ]]; then
+  notify-send -u critical "Error" "No script provided"
+  exit 1
+fi
+
+if [[ ! -x "$script_path" ]]; then
+  notify-send -u critical "Error" "Script not found or not executable: $script_path"
+  exit 1
+fi
+
+# Check if script uses gum/TUI or is pure rofi/GUI
+if grep -q "gum" "$script_path" || ! grep -q "rofi" "$script_path"; then
+  # Run in terminal
+  ptyxis -e bash -l -c "exec '$script_path' $@" >/dev/null 2>&1 &
+else
+  # Run directly (ROFI app)
+  nohup "$script_path" "$@" >/dev/null 2>&1 &
+fi
