@@ -1,8 +1,8 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
-name: omasecure
-description: Security-focused Origami Linux image with Trivalent, niri, and audio production tools.
+name: Musicos
+description: Origami Linux image with Trivalent, and audio production tools.
 
 base-image: registry.gitlab.com/origami-linux/images/origami
 image-version: latest
@@ -25,7 +25,7 @@ modules:
         # Default browser (hardened Chromium from secureblue)
         - trivalent
         # Wayland compositor
-        - niri
+        - sway
         # Application launcher (Wayland-native)
         - rofi-wayland
         # Status bar
@@ -34,8 +34,14 @@ modules:
         - foot
         # Screen recorder / streaming
         - obs-studio
-        # Video editor
+        # Editing
+        - Ardour9
         - kdenlive
+        #Hardening
+        - run0edit
+        #Glamour
+        - gum
+        - localsend
     remove:
       packages:
         # Replaced by Trivalent
