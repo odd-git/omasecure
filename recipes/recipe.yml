@@ -30,8 +30,6 @@ modules:
         - niri
         # Application launcher (Wayland-native)
         - rofi-wayland
-        # Status bar
-        - waybar
         # Terminal emulator
         - foot
         # Screen recorder / streaming
