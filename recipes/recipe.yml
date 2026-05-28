@@ -15,9 +15,9 @@ modules:
         destination: /
 
   # Package management: add repos, install and remove packages
-  - type: script
-    scripts:
-      - setup-tiling.sh
+  #- type: script
+   # scripts:
+   #   - setup-tiling.sh
   - type: dnf
     repos:
       files:
