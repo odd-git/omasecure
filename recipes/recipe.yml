@@ -35,13 +35,10 @@ modules:
         # Screen recorder / streaming
         - obs-studio
         # Editing
-        - Ardour9
+        - ardour9
         - kdenlive
-        #Hardening
-        - run0edit
         #Glamour
         - gum
-        - localsend
     remove:
       packages:
         # Replaced by Trivalent
