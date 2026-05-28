@@ -27,7 +27,7 @@ modules:
         # Default browser (hardened Chromium from secureblue)
         - trivalent
         # Wayland compositor
-        - sway
+        - niri
         # Application launcher (Wayland-native)
         - rofi-wayland
         # Status bar
