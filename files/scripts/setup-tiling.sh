@@ -15,6 +15,9 @@ dnf install -y nautilus-open-any-terminal
 glib-compile-schemas /usr/share/glib-2.0/schemas
 gsettings set com.github.stunkymonkey.nautilus-open-any-terminal terminal kitty
 
+# Install Niri
+dnf -y install niri
+
 # Install Dank Linux shell
 curl --output-dir "/etc/yum.repos.d/" \
   --remote-name "https://copr.fedorainfracloud.org/coprs/avengemedia/dms/repo/fedora-$(rpm -E %fedora)/avengemedia-dms-fedora-$(rpm -E %fedora).repo"
