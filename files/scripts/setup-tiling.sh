@@ -5,7 +5,7 @@ set -euo pipefail
 sed -i '/^\[main\]/a max_parallel_downloads=10' /etc/dnf/dnf.conf
 
 # Install Dank Linux shell
-sudo curl --output-dir "/etc/yum.repos.d/" \
+curl --output-dir "/etc/yum.repos.d/" \
   --remote-name "https://copr.fedorainfracloud.org/coprs/avengemedia/dms/repo/fedora-$(rpm -E %fedora)/avengemedia-dms-fedora-$(rpm -E %fedora).repo"
 dnf -y install quickshell dms greetd dms-greeter --allowerasing
 #
@@ -25,4 +25,4 @@ systemctl enable --force greetd.service
 mkdir -p /etc/skel/.config/systemd/user/graphical-session.target.wants
 ln -s /usr/lib/systemd/user/dms.service /etc/skel/.config/systemd/user/graphical-session.target.wants/
 mkdir -p /etc/skel/.config/niri/
-cp -rf /ctx/dot_config/niri/config.kdl /etc/skel/.config/niri/
+cp -rf /tmp/files/dot_config/niri/config.kdl /etc/skel/.config/niri/

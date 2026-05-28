@@ -2,7 +2,7 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
 name: omasecure
-description: Origami Linux image with Trivalent and audio production tools.
+description: Origami Linux image with Trivalent, and audio production tools.
 
 base-image: registry.gitlab.com/origami-linux/images/origami
 image-version: latest
@@ -13,10 +13,11 @@ modules:
     files:
       - source: system
         destination: /
+
+  # Package management: add repos, install and remove packages
   - type: script
     scripts:
       - setup-tiling.sh
-  # Package management: add repos, install and remove packages
   - type: dnf
     repos:
       files:
@@ -26,8 +27,6 @@ modules:
       packages:
         # Default browser (hardened Chromium from secureblue)
         - trivalent
-        # Wayland compositor
-        - niri
         # Application launcher (Wayland-native)
         - rofi-wayland
         # Terminal emulator
@@ -37,7 +36,7 @@ modules:
         # Editing
         - ardour9
         - kdenlive
-        # Glamour
+        #Glamour
         - gum
     remove:
       packages:
