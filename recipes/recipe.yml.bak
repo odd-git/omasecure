@@ -24,8 +24,7 @@ modules:
         # Trivalent (hardened Chromium) and other secureblue packages
         - https://repo.secureblue.dev/secureblue.repo
       copr:
-        - avengemedia/dms-git
-        - avengemedia/danklinux
+      - name: avengemedia/danklinux
     install:
       packages:
         # Default browser (hardened Chromium from secureblue)

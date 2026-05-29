@@ -15,21 +15,21 @@ modules:
         destination: /
 
   # Package management: add repos, install and remove packages
-  #- type: script
-   # scripts:
-   #   - setup-tiling.sh
   - type: dnf
     repos:
       files:
         # Trivalent (hardened Chromium) and other secureblue packages
         - https://repo.secureblue.dev/secureblue.repo
-      copr:
-        - avengemedia/dms-git
-        - avengemedia/danklinux
     install:
       packages:
         # Default browser (hardened Chromium from secureblue)
         - trivalent
+        # Wayland compositor
+        - niri
+        - quickshell
+        - dms
+        - greetd
+        - dms-greeter
         # Application launcher (Wayland-native)
         - rofi-wayland
         # Terminal emulator
@@ -41,11 +41,6 @@ modules:
         - kdenlive
         #Glamour
         - gum
-        - niri 
-        - quickshell 
-        - dms 
-        - greetd 
-        - dms-greeter 
     remove:
       packages:
         # Replaced by Trivalent
