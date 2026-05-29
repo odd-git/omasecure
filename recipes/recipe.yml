@@ -61,7 +61,6 @@ modules:
     system:
       enabled:
         - greetd.service
-        - dms.service
       disabled:
         - cosmic-greeter.service
         - cosmic-greeter-daemon.service
