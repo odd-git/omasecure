@@ -26,6 +26,8 @@ modules:
       copr:
         - name: avengemedia/dms-git
           chroot: fedora-44-x86_64
+        - name: atim/starship
+          chroot: fedora-44-x86_64  
         - name: avengemedia/danklinux
           chroot: fedora-44-x86_64
     install:
@@ -43,6 +45,14 @@ modules:
         - kdenlive
         #Glamour
         - gum
+        #niri-dank
+        - dms
+        - dms-greeter
+        - greetd
+        - greetd-selinux
+        - dgop
+        - dsearch
+        - alacritty
     remove:
       packages:
         # Replaced by Trivalent
@@ -51,7 +61,8 @@ modules:
         - waybar
   #- type: systemd
    # system:
-  #    enabled:
+  #    ena- name: atim/starship
+          chroot: fedora-44-x86_64bled:
    #     - greetd.service
     #  disabled:
      #   - cosmic-greeter.service
