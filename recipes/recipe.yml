@@ -45,8 +45,6 @@ modules:
         - kdenlive
         #Glamour
         - gum
-        #niri-dank
-        - 
     remove:
       packages:
         # Replaced by Trivalent
@@ -55,8 +53,6 @@ modules:
         - waybar
   #- type: systemd
    # system:
-  #    ena- name: atim/starship
-          chroot: fedora-44-x86_64bled:
    #     - greetd.service
     #  disabled:
      #   - cosmic-greeter.service
