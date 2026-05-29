@@ -62,8 +62,8 @@ modules:
         - waybar
   - type: systemd
     system:
-      enabled:
-        - greetd.service
+     # enabled:
+      #  - greetd.service
        #disabled:
         #- cosmic-greeter.service
         #- cosmic-greeter-daemon.service
