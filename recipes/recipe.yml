@@ -24,8 +24,10 @@ modules:
         # Trivalent (hardened Chromium) and other secureblue packages
         - https://repo.secureblue.dev/secureblue.repo
       copr:
-        - avengemedia/dms-git
-        - avengemedia/danklinux
+        - name: avengemedia/dms-git
+          chroot: fedora-43-x86_64
+        - name: avengemedia/danklinux
+          chroot: fedora-43-x86_64
     install:
       packages:
         # Default browser (hardened Chromium from secureblue)
