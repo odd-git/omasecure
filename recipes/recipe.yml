@@ -43,9 +43,12 @@ modules:
         - kdenlive
         #Glamour
         - gum
+        - nu
         - niri 
         - quickshell 
-        - dms 
+        - dms
+        - dgop 
+        - dsearch
         - greetd 
         - dms-greeter 
         - greetd-selinux
