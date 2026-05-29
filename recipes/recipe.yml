@@ -16,8 +16,8 @@ modules:
 
   # Package management: add repos, install and remove packages
   #- type: script
-   # scripts:
-   #   - setup-tiling.sh
+    #scripts:
+     # - setup-tiling.sh
   - type: dnf
     repos:
       files:
@@ -51,6 +51,9 @@ modules:
         - greetd-selinux
         - dgop
         - dsearch
+        - libvirt 
+        - virt-manager 
+        - qemu-kvm
     remove:
       packages:
         # Replaced by Trivalent
@@ -61,9 +64,9 @@ modules:
     system:
       enabled:
         - greetd.service
-      disabled:
-        - cosmic-greeter.service
-        - cosmic-greeter-daemon.service
+       #disabled:
+        #- cosmic-greeter.service
+        #- cosmic-greeter-daemon.service
 
   # System-wide flatpaks (Flathub)
   - type: default-flatpaks
