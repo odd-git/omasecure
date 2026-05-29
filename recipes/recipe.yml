@@ -46,13 +46,7 @@ modules:
         #Glamour
         - gum
         #niri-dank
-        - dms
-        - dms-greeter
-        - greetd
-        - greetd-selinux
-        - dgop
-        - dsearch
-        - alacritty
+        - 
     remove:
       packages:
         # Replaced by Trivalent
