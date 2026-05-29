@@ -52,7 +52,7 @@ systemctl enable --force greetd.service
 mkdir -p /etc/skel/.config/systemd/user/graphical-session.target.wants
 ln -s /usr/lib/systemd/user/dms.service /etc/skel/.config/systemd/user/graphical-session.target.wants/
 mkdir -p /etc/skel/.config/niri/
-cp -rf /ctx/dot_config/niri/config.kdl /etc/skel/.config/niri/
+cp -rf /tmp/files/dot_config/niri/config.kdl /etc/skel/.config/niri/
 
 # DEV packages
 # cargo evtest git input-remapper libevdev-devel libinput-utils python3-devel
