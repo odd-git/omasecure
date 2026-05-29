@@ -49,9 +49,15 @@ modules:
         - dms
         - dgop 
         - dsearch
-        - greetd 
-        - dms-greeter 
+        - greetd
+        - dms-greeter
         - greetd-selinux
+    remove:
+      packages:
+        # Replaced by Trivalent
+        - firefox
+        - firefox-langpacks
+        - waybar
   - type: systemd
     system:
       enabled:
@@ -59,12 +65,6 @@ modules:
       disabled:
         - cosmic-greeter.service
         - cosmic-greeter-daemon.service
-    remove:
-      packages:
-        # Replaced by Trivalent
-        - firefox
-        - firefox-langpacks
-        - waybar
 
   # System-wide flatpaks (Flathub)
   - type: default-flatpaks
