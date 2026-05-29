@@ -25,9 +25,9 @@ modules:
         - https://repo.secureblue.dev/secureblue.repo
       copr:
         - name: avengemedia/dms-git
-          chroot: fedora-43-x86_64
+          chroot: fedora-44-x86_64
         - name: avengemedia/danklinux
-          chroot: fedora-43-x86_64
+          chroot: fedora-44-x86_64
     install:
       packages:
         # Default browser (hardened Chromium from secureblue)
@@ -44,14 +44,13 @@ modules:
         #Glamour
         - gum
         - nu
-        - niri 
-        - quickshell 
+        - niri
         - dms
-        - dgop 
-        - dsearch
-        - greetd
         - dms-greeter
+        - greetd
         - greetd-selinux
+        - dgop
+        - dsearch
     remove:
       packages:
         # Replaced by Trivalent
