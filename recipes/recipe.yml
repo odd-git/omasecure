@@ -48,6 +48,14 @@ modules:
         - dms 
         - greetd 
         - dms-greeter 
+        - greetd-selinux
+  - type: systemd
+    system:
+      enabled:
+        - greetd.service
+      disabled:
+        - cosmic-greeter.service
+        - cosmic-greeter-daemon.service
     remove:
       packages:
         # Replaced by Trivalent
