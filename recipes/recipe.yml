@@ -15,9 +15,9 @@ modules:
         destination: /
 
   # Package management: add repos, install and remove packages
-  #- type: script
-   # scripts:
-   #   - setup-tiling.sh
+  - type: script
+    scripts:
+      - setup-tiling.sh
   - type: dnf
     repos:
       files:
@@ -43,14 +43,6 @@ modules:
         - kdenlive
         #Glamour
         - gum
-        - nu
-        - niri
-        - dms
-        - dms-greeter
-        - greetd
-        - greetd-selinux
-        - dgop
-        - dsearch
     remove:
       packages:
         # Replaced by Trivalent
