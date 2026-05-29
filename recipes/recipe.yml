@@ -53,6 +53,7 @@ modules:
         # Replaced by Trivalent
         - firefox
         - firefox-langpacks
+        - waybar
 
   # System-wide flatpaks (Flathub)
   - type: default-flatpaks
