@@ -44,7 +44,7 @@ Item {
     function getItems(query) {
         const items = profiles.map(p => ({
             name: p.name,
-            icon: "unicode:🌐",
+            icon: "",
             comment: p.id === "GUEST_SESSION" ? "Private browsing – no data saved" : "Open Trivalent with this profile",
             action: "trivalent:" + encodeURIComponent(p.id),
             categories: ["Browser"]
