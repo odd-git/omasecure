@@ -1,0 +1,16 @@
+{
+    "id": "trivalent-profiles",
+    "name": "Trivalent Profiles",
+    "description": "Launch Trivalent browser with profile selection",
+    "version": "1.0.0",
+    "author": "omablue",
+    "icon": "language",
+    "type": "launcher",
+    "capabilities": ["command-execution"],
+    "component": "./TrivalentProfilesLauncher.qml",
+    "trigger": "br",
+    "permissions": [
+        "settings_read",
+        "settings_write"
+    ]
+}
