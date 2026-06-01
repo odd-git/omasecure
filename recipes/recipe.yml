@@ -45,6 +45,7 @@ modules:
         - kdenlive
         #Glamour
         - gum
+        - docker
     remove:
       packages:
         # Replaced by Trivalent
