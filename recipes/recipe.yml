@@ -23,7 +23,6 @@ modules:
       files:
         # Trivalent (hardened Chromium) and other secureblue packages
         - https://repo.secureblue.dev/secureblue.repo
-        - https://download.docker.com/linux/fedora/docker-ce.repo
       copr:
         - name: avengemedia/dms-git
           chroot: fedora-44-x86_64
@@ -47,11 +46,7 @@ modules:
         #Glamour
         - gum
         - docker
-        - docker-ce
-        - docker-ce-cli
-        - containerd.io
-        - docker-buildx-plugin
-        - docker-compose-plugin
+        - docker-compose
     remove:
       packages:
         # Replaced by Trivalent
