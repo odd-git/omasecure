@@ -45,8 +45,7 @@ modules:
         - kdenlive
         #Glamour
         - gum
-        - docker
-        - docker-compose
+        - tailscale
     remove:
       packages:
         # Replaced by Trivalent
