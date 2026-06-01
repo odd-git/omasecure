@@ -46,6 +46,7 @@ modules:
         #Glamour
         - gum
         - docker
+        - docker-compose
     remove:
       packages:
         # Replaced by Trivalent
