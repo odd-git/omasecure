@@ -16,9 +16,6 @@ modules:
 
   # Package management: add repos, install and remove packages
   - type: dnf
-    repos:
-      files:
-        # 
     install:
       packages:
         # Screen recorder / streaming
