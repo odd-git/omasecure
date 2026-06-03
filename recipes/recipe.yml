@@ -2,10 +2,10 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
 name: omasecure
-description: Origami Linux image with Trivalent, and audio production tools.
+description: securbelue, and audio production tools.
 
-base-image: ghcr.io/rakuos/rakuos-base
-image-version: latest
+base-image: ghcr.io/secureblue/silverblue-main-hardened
+image-version: latest 
 
 modules:
   # Deploy system config files (sysusers.d for audio group, etc.)
@@ -15,50 +15,55 @@ modules:
         destination: /
 
   # Package management: add repos, install and remove packages
-  - type: script
-    scripts:
-      - setup-tiling.sh
   - type: dnf
     repos:
-      files:
-        # Trivalent (hardened Chromium) and other secureblue packages
-        - https://repo.secureblue.dev/secureblue.repo
       copr:
+        - name: atim/starship
+          chroot: fedora-44-x86_64
         - name: avengemedia/dms-git
           chroot: fedora-44-x86_64
-        - name: atim/starship
-          chroot: fedora-44-x86_64  
         - name: avengemedia/danklinux
           chroot: fedora-44-x86_64
     install:
       packages:
-        - trivalent
-        - rofi-wayland
-        - foot
+        # Screen recorder / streaming
         - obs-studio
+        # Editing
         - ardour9
         - kdenlive
+        - neovim
+        #Glamour
         - gum
-        - tailscale
-    remove:
-      packages:
-        # Replaced by Trivalent
-        - firefox
-        - firefox-langpacks
-        - waybar
-  #- type: systemd
-   # system:
-   #     - greetd.service
-    #  disabled:
-     #   - cosmic-greeter.service
-      #  - cosmic-greeter-daemon.service
-
+        - starship
+        - nu
+        - niri
+        - dms
+        - dms-greeter
+        - greetd
+        - greetd-selinux
+        - dgop
+        - dsearch
+  - type: systemd
+    system:
+      enabled:
+        - greetd.service
+      disabled:
+        - gdm.service
+  - type: brew
+    auto-update: true
+    auto-upgrade: true
+    update-interval: "1d"
+    upgrade-interval: "1d"
   # System-wide flatpaks (Flathub)
   - type: default-flatpaks
     configurations:
       - notify: true
         scope: system
         install:
+          - com.github.tchx84.Flatseal
+          - io.github.flattool.Warehouse
+          - io.missioncenter.MissionCenter
+          - com.github.rafostar.Clapper
           - org.gnome.Loupe
       - scope: user
 
