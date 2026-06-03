@@ -16,6 +16,10 @@ modules:
 
   # Package management: add repos, install and remove packages
   - type: dnf
+    repos:
+      copr:
+        - name: atim/starship
+          chroot: fedora-44-x86_64
     install:
       packages:
         # Screen recorder / streaming
