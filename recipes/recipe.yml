@@ -4,8 +4,8 @@
 name: omasecure
 description: securbelue, and audio production tools.
 
-base-image: ghcr.io/secureblue/silverblue-main-hardened
-image-version: latest 
+base-image: ghcr.io/secureblue/sericea-main-hardened
+image-version: latest
 
 modules:
   # Deploy system config files (sysusers.d for audio group, etc.)
@@ -18,12 +18,6 @@ modules:
   - type: dnf
     repos:
       copr:
-        - name: atim/starship
-          chroot: fedora-44-x86_64
-        - name: avengemedia/dms-git
-          chroot: fedora-44-x86_64
-        - name: avengemedia/danklinux
-          chroot: fedora-44-x86_64
     install:
       packages:
         # Screen recorder / streaming
@@ -35,25 +29,7 @@ modules:
         #Glamour
         - gum
         - starship
-        - nu
-        - niri
-        - dms
-        - dms-greeter
-        - greetd
-        - greetd-selinux
-        - dgop
-        - dsearch
-  - type: systemd
-    system:
-      enabled:
-        - greetd.service
-      disabled:
-        - gdm.service
-  - type: brew
-    auto-update: true
-    auto-upgrade: true
-    update-interval: "1d"
-    upgrade-interval: "1d"
+        - podman-compose
   # System-wide flatpaks (Flathub)
   - type: default-flatpaks
     configurations:
