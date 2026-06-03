@@ -4,7 +4,7 @@
 name: omasecure
 description: Origami Linux image with Trivalent, and audio production tools.
 
-base-image: ghcr.io/rakuos/rakuos-base:latest
+base-image: ghcr.io/rakuos/rakuos-base
 image-version: latest
 
 modules:
