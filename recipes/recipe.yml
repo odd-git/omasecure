@@ -4,7 +4,7 @@
 name: omasecure
 description: Origami Linux image with Trivalent, and audio production tools.
 
-base-image: registry.gitlab.com/origami-linux/images/origami
+base-image: ghcr.io/secureblue/sericea-main-hardened
 image-version: latest
 
 modules:
@@ -32,20 +32,17 @@ modules:
           chroot: fedora-44-x86_64
     install:
       packages:
-        # Default browser (hardened Chromium from secureblue)
         - trivalent
-        # Application launcher (Wayland-native)
         - rofi-wayland
-        # Terminal emulator
         - foot
-        # Screen recorder / streaming
         - obs-studio
-        # Editing
         - ardour9
         - kdenlive
-        #Glamour
         - gum
         - tailscale
+        - xdg-desktop-portal-wlr
+        - xdg-desktop-portal
+        - xdg-desktop-portal-gtk
     remove:
       packages:
         # Replaced by Trivalent
