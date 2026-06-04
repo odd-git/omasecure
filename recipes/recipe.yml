@@ -2,7 +2,7 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
 name: omasecure
-description: securbelue, and audio production tools.
+description: secureblue, and audio production tools.
 
 base-image: ghcr.io/rakuos/rakuos-base
 image-version: latest
@@ -16,6 +16,10 @@ modules:
 
   # Package management: add repos, install and remove packages
   - type: dnf
+    repos:
+      files:
+        # Trivalent (hardened Chromium) and other secureblue packages
+        - https://repo.secureblue.dev/secureblue.repo
     install:
       packages:
         # Screen recorder / streaming
@@ -28,6 +32,7 @@ modules:
         - gum
         - starship
         - podman-compose
+        - trivalent
   # System-wide flatpaks (Flathub)
   - type: default-flatpaks
     configurations:
@@ -39,7 +44,7 @@ modules:
           - io.missioncenter.MissionCenter
           - com.github.rafostar.Clapper
           - org.gnome.Loupe
-          - app.zen_browser.zen 
+          - app.zen_browser.zen
       - scope: user
 
   # Signing policy for the published image

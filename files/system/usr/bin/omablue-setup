@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-# Entry point for the omablue setup — runs the interactive installer
-# from the system-embedded repo at /usr/share/omablue/
-exec bash /usr/share/omablue/setup/omablue-setup.sh "$@"
