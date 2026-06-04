@@ -4,7 +4,7 @@
 name: omasecure
 description: securbelue, and audio production tools.
 
-base-image: ghcr.io/secureblue/sericea-main-hardened
+base-image: ghcr.io/rakuos/rakuos-base
 image-version: latest
 
 modules:
@@ -16,10 +16,6 @@ modules:
 
   # Package management: add repos, install and remove packages
   - type: dnf
-    repos:
-      copr:
-        - name: atim/starship
-          chroot: fedora-44-x86_64
     install:
       packages:
         # Screen recorder / streaming
@@ -43,6 +39,7 @@ modules:
           - io.missioncenter.MissionCenter
           - com.github.rafostar.Clapper
           - org.gnome.Loupe
+          - app.zen_browser.zen 
       - scope: user
 
   # Signing policy for the published image
